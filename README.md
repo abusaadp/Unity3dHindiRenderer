@@ -1,0 +1,1 @@
+Unity is not able to render hindi text properly. This is the font processing in Unity copes with the glyphs, but does not read the GSUB and GPOS tables that font renderers use to convert strings into rendering components. In this project we convert unicode to Krutidev and then render the text using Kruti dev font. The rendering works for all Devanagiri fonts.
