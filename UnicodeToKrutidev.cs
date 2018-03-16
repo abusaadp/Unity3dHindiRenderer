@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
 
+
 public class UnicodeToKrutidev {
 
 
@@ -64,58 +65,100 @@ public class UnicodeToKrutidev {
 		string modified_substring = unicode_substring;
 
 		int position_of_quote = modified_substring.IndexOf("'");
-		while (position_of_quote != -1){ 
+		while (position_of_quote >= 0){ 
 			modified_substring =  ReplaceFirstOccurrence(modified_substring,"'","^");
 			modified_substring =  ReplaceFirstOccurrence(modified_substring,"'","*");
 			position_of_quote = modified_substring.IndexOf("'");
 		}
 
 		int position_of_Dquote = modified_substring.IndexOf("\"");
-		while (position_of_Dquote != -1){ 
+		while (position_of_Dquote >= 0){ 
 			modified_substring =  ReplaceFirstOccurrence(modified_substring,"\"","ß");
 			modified_substring =  ReplaceFirstOccurrence(modified_substring,"\"","Þ");
 			position_of_Dquote = modified_substring.IndexOf("\"");
 		}
-		//Specialty characters
-		modified_substring = modified_substring.Replace ("क़", "क़");
-		modified_substring = modified_substring.Replace ("ख़‌", "ख़");
-		modified_substring = modified_substring.Replace ("ग़", "ग़");
-		modified_substring = modified_substring.Replace ("ज़", "ज़");
-		modified_substring = modified_substring.Replace ("ड़", "ड़");
-		modified_substring = modified_substring.Replace ("ढ़", "ढ़");
-		modified_substring = modified_substring.Replace ("ऩ", "ऩ");
-		modified_substring = modified_substring.Replace ("फ़", "फ़");
-		modified_substring = modified_substring.Replace ("य़", "य़");
-		modified_substring = modified_substring.Replace ("ऱ", "ऱ");
-		modified_substring = modified_substring.Replace("ि","f");
+		// first Replace the two-byte nukta_varNa with corresponding one-byte nukta varNas.
 
-		//Replace Unicode with ASCII
-		for (int input_symbol_idx=0;  input_symbol_idx < array_one_length; input_symbol_idx++){
-			modified_substring = modified_substring.Replace (array_one [input_symbol_idx], array_two [input_symbol_idx]);
-		}
+		modified_substring = modified_substring.Replace ( "क़", "क़" ); 
+		modified_substring = modified_substring.Replace ( "ख़", "ख़" );
+		modified_substring = modified_substring.Replace ( "ग़", "ग़" );
+		modified_substring = modified_substring.Replace ( "ज़", "ज़" );
+		modified_substring = modified_substring.Replace ( "ड़", "ड़" );
+		modified_substring = modified_substring.Replace ( "ढ़", "ढ़" );
+		modified_substring = modified_substring.Replace ( "ऩ", "ऩ" );
+		modified_substring = modified_substring.Replace ( "फ़", "फ़" );
+		modified_substring = modified_substring.Replace ( "य़", "य़" );
+		modified_substring = modified_substring.Replace ( "ऱ", "ऱ" );
 
-			// Move "f"  to correct position
-		modified_substring = "  " + modified_substring + "  ";
-		int position_of_f = modified_substring.IndexOf("f");
-		while (position_of_f != -1){   
-			modified_substring = modified_substring.Substring(0,position_of_f-1) + modified_substring[position_of_f] + modified_substring[position_of_f-1] + modified_substring.Substring(position_of_f+1);
-			position_of_f = modified_substring.IndexOf("f", position_of_f +1 ) ;// search for f ahead of the current position.
-		}
-		modified_substring = modified_substring.Trim();
+		// code for replacing "ि" (chhotee ee kii maatraa) with "f"  and correcting its position too.
 
-					//Move "half R"  to correct position and Replace
-		modified_substring = "  " + modified_substring + "  ";
-		int position_of_r = modified_substring.IndexOf("j~");
-		List<string> set_of_matras =  new List<string>(){"‚",    "ks",   "kS",   "k",     "h",    "q",   "w",   "`",    "s",    "S", "a",    "¡",    "%",     "W",   "·",   "~ ", "~"};
-		while (position_of_r != -1){ 
-			modified_substring =  ReplaceFirstOccurrence(modified_substring,"j~","");
-			if (set_of_matras.Contains(""+modified_substring[position_of_r + 1]))
-				modified_substring = modified_substring.Substring(0,position_of_r + 2) + "Z" + modified_substring.Substring(position_of_r + 2);
-			else
-				modified_substring = modified_substring.Substring(0,position_of_r + 1) + "Z" + modified_substring.Substring(position_of_r + 1);
-			position_of_r = modified_substring.IndexOf("j~");
-		}
-		modified_substring = modified_substring.Trim();
+		var position_of_f = modified_substring.IndexOf( "ि" )  ;
+		while ( position_of_f != -1 )  //while-02
+		{
+			var character_left_to_f = modified_substring[position_of_f - 1];
+			modified_substring = modified_substring.Replace( character_left_to_f + "ि" ,  "f" + character_left_to_f )  ;
+
+			position_of_f = position_of_f - 1;
+
+			while (( position_of_f != 0  ) && ( modified_substring[position_of_f - 1] == '्' ) )
+			{
+				var string_to_be_Replaced = modified_substring[position_of_f - 2 ] + "्"  ;
+				modified_substring = modified_substring.Replace( string_to_be_Replaced + "f", "f" + string_to_be_Replaced ) ;
+
+				position_of_f = position_of_f - 2  ;
+			}
+			position_of_f = modified_substring.IndexOf("ि", position_of_f + 1 ) ; // search for f ahead of the current position.
+
+		} // end of while-02 loop
+
+
+		//************************************************************     
+		//     modified_substring = modified_substring.Replace( /fर्", "£"  )  ;
+		//************************************************************     
+		// Eliminating "र्" and putting  Z  at proper position for this.
+
+		string set_of_matras = "ािीुूृेैोौं:ँॅ";
+
+		modified_substring += "  ";  // add two spaces after the string to avoid UNDEFINED char in the following code.
+
+		var position_of_half_R = modified_substring.IndexOf( "र्" ) ;
+		while ( position_of_half_R > 0  )  // while-04
+		{
+			// "र्"  is two bytes long
+			var probable_position_of_Z = position_of_half_R + 2   ;  
+
+			var character_right_to_probable_position_of_Z = modified_substring[probable_position_of_Z + 1];
+
+			// trying to find non-maatra position right to probable_position_of_Z .
+
+			while ( set_of_matras.IndexOf( character_right_to_probable_position_of_Z ) != -1 )  
+			{
+				probable_position_of_Z = probable_position_of_Z + 1 ;
+				character_right_to_probable_position_of_Z = modified_substring[probable_position_of_Z + 1];
+			} // end of while-05
+
+			var string_to_be_Replaced = modified_substring.Substring( position_of_half_R + 2 , ( probable_position_of_Z - position_of_half_R - 1 ))  ;
+			modified_substring = modified_substring.Replace( "र्" + string_to_be_Replaced  ,  string_to_be_Replaced + "Z" ) ;
+			position_of_half_R = modified_substring.IndexOf( "र्" ) ;
+		} // end of while-04
+
+		modified_substring = modified_substring.Substring( 0 , modified_substring.Length - 2 );
+
+
+
+		//substitute array_two elements in place of corresponding array_one elements
+
+		for( int input_symbol_idx = 0; input_symbol_idx < array_one_length; input_symbol_idx++ )
+		{
+			int idx = 0  ;  // index of the symbol being searched for Replacement
+
+			while (idx != -1 ) //whie-00
+			{
+				modified_substring = modified_substring.Replace (array_one [input_symbol_idx], array_two [input_symbol_idx]);
+				idx = modified_substring.IndexOf (array_one [input_symbol_idx]);
+			} // end of while-00 loop
+		} // end of for loop
+
 
 		return modified_substring;
 	}
