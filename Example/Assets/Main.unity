@@ -337,7 +337,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u091C\u0902\u0915\u094D\u0936\u0928"
+  m_Text: "'\u0938\u094D\u0925\u093E\u0928' \u0936\u094D\u0930\u0947\u0923\u0940 \u0915\u0947
+    \u0905\u0902\u0926\u0930 \u0936\u092C\u094D\u0926\u094B\u0902 \u0915\u094B \u0926\u093F\u0916\u093E\u0928\u0947
+    \u0915\u0947 \u0932\u093F\u090F \u092F\u0939\u093E\u0902 \u091F\u0948\u092A \u0915\u0930\u0947\u0902"
 --- !u!222 &1424523331
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -63,6 +63,19 @@ public class UnicodeToKrutidev {
 		int array_one_length = array_one.Length;
 		string modified_substring = unicode_substring;
 
+		int position_of_quote = modified_substring.IndexOf("'");
+		while (position_of_quote != -1){ 
+			modified_substring =  ReplaceFirstOccurrence(modified_substring,"'","^");
+			modified_substring =  ReplaceFirstOccurrence(modified_substring,"'","*");
+			position_of_quote = modified_substring.IndexOf("'");
+		}
+
+		int position_of_Dquote = modified_substring.IndexOf("\"");
+		while (position_of_Dquote != -1){ 
+			modified_substring =  ReplaceFirstOccurrence(modified_substring,"\"","ß");
+			modified_substring =  ReplaceFirstOccurrence(modified_substring,"\"","Þ");
+			position_of_Dquote = modified_substring.IndexOf("\"");
+		}
 		//Specialty characters
 		modified_substring = modified_substring.Replace ("क़", "क़");
 		modified_substring = modified_substring.Replace ("ख़‌", "ख़");
