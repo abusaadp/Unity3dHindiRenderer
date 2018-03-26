@@ -13,4 +13,4 @@ The steps to make this work in Unity3d is very simple.
 
   1. Convert the unicode hindi text to krutidev text using the above script.
   2. Pass this krutidev text to any UI Textfield of Unity3d which uses the krutidev font.
-  3. The hindi layout when the app executes will show the correct hindi layout.
+  3. The hindi text when the app executes will show the correct hindi layout.
